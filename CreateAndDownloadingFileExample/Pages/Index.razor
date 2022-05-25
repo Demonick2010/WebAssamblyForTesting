@@ -40,7 +40,6 @@
         // Generate text file
         var stringForConverting = ConvertListToString(data, ',');
         byte[] file = Encoding.UTF8.GetBytes(stringForConverting);
-        //byte[] file = data.SelectMany(x => Encoding.UTF8.GetBytes(x + Environment.NewLine)).ToArray();
         await _js.InvokeVoidAsync("BlazorDownloadFile", "file.txt", "text/plain", file);
     }
 
