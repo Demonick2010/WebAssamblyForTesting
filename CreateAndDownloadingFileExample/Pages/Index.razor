@@ -1,0 +1,68 @@
+﻿@page "/"
+@using System.Text
+@inject IJSRuntime _js
+
+<PageTitle>Index</PageTitle>
+
+<div class="row border-1">
+    <div class="col">
+        <h1>Downloading file example</h1>
+        <button @onclick="DownloadText">Download Text File</button>
+    </div>
+</div>
+
+
+@code {
+    List<DataExample> data = new List<DataExample>()
+    {
+        new DataExample()
+        {
+             someString = "String field 1",
+             someInt = 6,
+             someBool = true
+        },
+        new DataExample()
+        {
+             someString = "String field 2",
+             someInt = 66,
+             someBool = false
+        },
+        new DataExample()
+        {
+             someString = "String field 3",
+             someInt = 666,
+             someBool = true
+        }
+    };
+
+    async Task DownloadText()
+    {
+        // Generate text file
+        var stringForConverting = ConvertListToString(data, ',');
+        byte[] file = Encoding.UTF8.GetBytes(stringForConverting);
+        //byte[] file = data.SelectMany(x => Encoding.UTF8.GetBytes(x + Environment.NewLine)).ToArray();
+        await _js.InvokeVoidAsync("BlazorDownloadFile", "file.txt", "text/plain", file);
+    }
+
+    public class DataExample
+    {
+        public string someString;
+        public int someInt;
+        public bool someBool;
+    }
+
+    public string ConvertListToString(IEnumerable<DataExample> listForConverting, char separator)
+    {
+        //var stringBuilder = new StringBuilder();
+        string doneString = string.Empty;
+
+        // Build the users string.
+        foreach (var item in listForConverting)
+        {
+            var currentString = $"{item.someString}{separator}{item.someInt}{separator}{item.someBool}\n";
+            doneString += currentString;
+        }
+
+        return doneString;
+    }
+}
